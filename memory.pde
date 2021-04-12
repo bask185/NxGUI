@@ -13,28 +13,7 @@ class Memory extends RailItem
     
     designation = str(ID);
   }
-  
-  void addSwitch(int switchID, int state)  
-  {
-    attachedSwitches[switchIndex] = switchID;
-    switchStates[switchIndex++] = state;
-  }
-  
-  void triggered()
-  {
-    if(state == 1) state =0;
-    else state = 1;
-  }
-  
-  int[] getSwitches()
-  {
-    return attachedSwitches;
-  }
-  
-  int[] getStates()
-  {
-    return switchStates;
-  }
+
   
   void Draw()
   {
@@ -59,7 +38,7 @@ class Memory extends RailItem
     fill(200,200,0);
     
     stroke(0);
-    ellipse(Xpos,Ypos,gridSize-10,gridSize-10);
+    ellipse(Xpos,Ypos,gridSize-5,gridSize-5);
     fill(0);
     text(designation,Xpos,Ypos);
   }

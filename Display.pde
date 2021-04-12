@@ -62,13 +62,20 @@ void printAt(int col, int row, String str )
 	store(str);
 }
 
+void printNumber(int num )  // just a wrapper really
+{
+	store(num);
+}
+
+void printNumberAt(int col, int row, int num )
+{
+	setPosition( col, row );
+	store(num);
+}
+
 void store(int number)
 {
 	store( Integer.toString(number) );
-	// if( number >= 10000 ) {
-	// 	text[column][row].setText(str.charAt(index), c[2]); // safes any lettre with colour as arguement
-	// 	if(column < colMax) column++;
-	// }
 }
 
 
