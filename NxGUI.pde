@@ -155,13 +155,13 @@ void draw() {
 
     for (int i = 0; i < railItems.size(); i++) {	
         RailItem anyClass = railItems.get(i);
-        if(anyClass instanceof Switch) 	  { Switch sw = (Switch) anyClass; sw.Draw();}
+        if(anyClass instanceof Switch) 	  { Switch     sw = (Switch)    anyClass; sw.Draw();}
         if(anyClass instanceof Detection) { Detection det = (Detection) anyClass; det.Draw();}
-        if(anyClass instanceof Line) 	  { Line ln = (Line) anyClass; ln.Draw();}
-        if(anyClass instanceof Curve) 	  { Curve cv = (Curve) anyClass; cv.Draw();}
-        if(anyClass instanceof Memory) 	  { Memory mem = (Memory) anyClass; mem.Draw();}
+        if(anyClass instanceof Line) 	  { Line       ln = (Line)      anyClass; ln.Draw();}
+        if(anyClass instanceof Curve) 	  { Curve      cv = (Curve)     anyClass; cv.Draw();}
+        if(anyClass instanceof Memory) 	  { Memory    mem = (Memory)    anyClass; mem.Draw();}
         if(anyClass instanceof Decoupler) { Decoupler dec = (Decoupler) anyClass; dec.Draw();}
-        if(anyClass instanceof Signal) 	  { Signal sig = (Signal) anyClass; sig.Draw();} }
+        if(anyClass instanceof Signal) 	  { Signal    sig = (Signal)    anyClass; sig.Draw();} }
 
     fill(0);
     textSize(gridSize/2 );
@@ -193,8 +193,10 @@ void drawGrid() {
     fill(255);
     stroke(0);
     rect(1,1,65*gridSize-1, 33*gridSize-1);
-    for(int i = 0 ; i < 64 ; i++ ){
-        for(int j = 0 ; j < 32 ; j++ ){
+    for(int i = 0 ; i < 64 ; i++ )
+    {
+        for(int j = 0 ; j < 32 ; j++ )
+        {
             rect(gridSize+i*gridSize,gridSize+j*gridSize,0,0);
         } 
     } 
@@ -204,7 +206,7 @@ void drawGrid() {
 void mousePressed()
 {	
     if(mouseX < width / 2 && mouseY > height - gridSize) saveLayout(); // works
-    //if(mouseX > width / 2 && mouseY > height - gridSize) loadLayout(); // WORK IN PROGRESS
+    
     RailItem anyClass = railItems.get(0);
     
     for (int i = 0; i < railItems.size(); i++) { 
@@ -213,46 +215,32 @@ void mousePressed()
             locked = true;
             index = i;
   
-            display.printAt(0,2, "        ID = "); display.printNumber( anyClass.getID()       ) ; display.clearToEnd();
-            display.printAt(0,3, " INPUT PIN = "); display.printNumber( anyClass.getPin()      ) ; display.clearToEnd();
+            display.printAt(0,2, "ID         = "); display.printNumber( anyClass.getID()       ) ; display.clearToEnd();
+            display.printAt(0,3, "INPUT PIN  = "); display.printNumber( anyClass.getPin()      ) ; display.clearToEnd();
             display.printAt(0,4, "OUTPUT PIN = "); display.printNumber( anyClass.getLinkedPin()) ; display.clearToEnd();
             display.printAt(0,5, "type = "); display.store( types[ anyClass.getType() ] ) ;
-
             // if(anyClass instanceof Switch) 		print("SWITCH ");
-            // if(anyClass instanceof Line)	 	    print("LINE ");
-            // if(anyClass instanceof Curve) 		print("CURVE ");
-            // if(anyClass instanceof Memory) 		print("MEMORY ");
-            // if(anyClass instanceof Detection) 	print("DETECTOR ");
-            // if(anyClass instanceof Detection) 	print("DECOUPLER ");
-            // if(anyClass instanceof Signal) 		print("SIGNAL ");
-            // println("SELECTED");
             break;
         } 
     }
     
-    switch(mode) {        
-     
-        case movingItem:
+    if( mode == movingItem) {
         if(mouseX > (width-2*gridSize)) { 
             locked = true;
             println("new item created");
             switch(row) {
-                case 0: railItems.add( new Switch(           0,(width-2*gridSize)/gridSize, 0, 2, gridSize,left )); println("SWITCH CREATED");    break;
-                case 1: railItems.add( new Switch(           0,(width-2*gridSize)/gridSize, 0, 2, gridSize,right)); println("SWITCH CREATED");    break;
-                case 2: railItems.add( new Line(               (width-2*gridSize)/gridSize, 2, 2, gridSize) );      println("LINE CREATED");      break;
-                case 3: railItems.add( new Curve(              (width-2*gridSize)/gridSize, 3, 2, gridSize) );      println("CURVE CREATED");     break;
-                case 4: railItems.add( new Detection(        0,(width-2*gridSize)/gridSize, 4, 2, gridSize) );      println("DETECTOR CREATED");  break;
-                case 5: railItems.add( new Memory(   0,(width-gridSize-edgeOffset)/gridSize,5, 0, gridSize) );      println("MEMORY CREATED");    break;
-                case 6: railItems.add( new Decoupler(0,(width-gridSize-edgeOffset)/gridSize,6, 0, gridSize) );      println("DECOUPLER CREATED"); break;
-                case 7: railItems.add( new Signal(0,(width-gridSize-edgeOffset) / gridSize, 7, 0,gridSize,0));      println("SIGNAL CREATED");    break;
+                case 0: railItems.add( new Switch(   0,(width - 2 * gridSize)      / gridSize, 0, 2, gridSize,left )); println("SWITCH CREATED");    break;
+                case 1: railItems.add( new Switch(   0,(width - 2 * gridSize)      / gridSize, 0, 2, gridSize,right)); println("SWITCH CREATED");    break;
+                case 2: railItems.add( new Line(       (width - 2 * gridSize)      / gridSize, 2, 2, gridSize) );      println("LINE CREATED");      break;
+                case 4: railItems.add( new Detection(0,(width - 2 * gridSize)      / gridSize, 4, 2, gridSize) );      println("DETECTOR CREATED");  break;
+                case 3: railItems.add( new Curve(      (width - 2 * gridSize)      / gridSize, 3, 2, gridSize) );      println("CURVE CREATED");     break;
+                case 5: railItems.add( new Memory(   0,(width-gridSize-edgeOffset) / gridSize, 5, 0, gridSize) );      println("MEMORY CREATED");    break;
+                case 6: railItems.add( new Decoupler(0,(width-gridSize-edgeOffset) / gridSize, 6, 0, gridSize) );      println("DECOUPLER CREATED"); break;
+                case 7: railItems.add( new Signal(   0,(width-gridSize-edgeOffset) / gridSize, 7, 0, gridSize,0));     println("SIGNAL CREATED");    break;
             }
             index = railItems.size() - 1;
         }
-        break;
-        
-        case deletingItem:
-        break;
-        }		
+    }
 }
       
 
@@ -262,8 +250,7 @@ void mouseDragged()
         RailItem anyClass = railItems.get(index);
         column = constrain( column, 0, 63 );
         row = constrain( row, 0, 31 );
-
-        anyClass.setPos(column,row);
+        anyClass.setPos(column,row);            // update positon of selected object
     }
 }
 
@@ -271,88 +258,79 @@ void mouseDragged()
 
 void mouseReleased()
 {
-    switch(mode) {
-        
-        case movingItem:
-        locked = false;
-        break;
-        
-        case deletingItem:
-        if(railItems.size()>0 && index < railItems.size())
+    locked = false;
+
+    if(mode == deletingItem)
+    {
+        if( railItems.size() > 0 && index < railItems.size() ) // N.B. TODO. if you click on empty space you will delete elements from the railItem list. a coordinate check is needed
+        {
             railItems.remove(index);		// DELETE THE OBJECT
-        locked=false;
-        break;
+        }
     }
 }
 
 
-
 void keyPressed()
-{	
-    switch (key){
-        
-    case 'm':case 'M': display.printAt(0,0,       "MOVING ITEM"); display.clearToEnd(); mode = movingItem; break;
-    case 'd':case 'D': display.printAt(0,0,     "DELETING ITEM"); display.clearToEnd(); mode = deletingItem; break;
-    case 'n':case 'N': display.printAt(0,0,        "SETTING ID"); display.clearToEnd(); mode = settingID ; break;
-    case 'i':case 'I': display.printAt(0,0, "SETTING INPUT PIN"); display.clearToEnd(); mode = settingInputPin; break;
-    case 'o':case 'O': display.printAt(0,0,"SETTING OUTPUT PIN"); display.clearToEnd(); mode = settingOutputPin; break;
-    case 'T':case 't': display.printAt(0,0,    "CHANGE IO TYPE"); display.clearToEnd(); mode = settingType; break ;
- 
-    }
-    
-    //if(keyCode == ENTER)
-    if( (key >= '0' && key <= '9') || keyCode == ENTER || keyCode == BACKSPACE )
+{
+    switch (key)
     {
-        if(keyCode == BACKSPACE) number /= 10 ;
-        else if (keyCode == ENTER) number = 0 ;;
+        case 'm':case 'M': display.printAt(0,0,       "MOVING ITEM"); display.clearToEnd(); mode = movingItem; break;
+        case 'd':case 'D': display.printAt(0,0,     "DELETING ITEM"); display.clearToEnd(); mode = deletingItem; break;
+        case 'n':case 'N': display.printAt(0,0,        "SETTING ID"); display.clearToEnd(); mode = settingID ; break;
+        case 'i':case 'I': display.printAt(0,0, "SETTING INPUT PIN"); display.clearToEnd(); mode = settingInputPin; break;
+        case 'o':case 'O': display.printAt(0,0,"SETTING OUTPUT PIN"); display.clearToEnd(); mode = settingOutputPin; break;
+        case 't':case 'T': display.printAt(0,0,    "CHANGE IO TYPE"); display.clearToEnd(); mode = settingType; break ;
+        
+        default: // all other caracters
+
+        if (keyCode == ENTER) number = 0 ;
         else number = makeNumber(number,0,255);
-    }
 
-    switch(mode) {
 
-        case settingID:         display.setCursor( 7, 3 );  display.printNumber( number ); display.clearToEnd(); break ;
-        case settingInputPin:   display.setCursor( 7, 4 );  display.printNumber( number ); display.clearToEnd(); break ;
-        case settingOutputPin:  display.setCursor( 7, 5 );  display.printNumber( number ); display.clearToEnd(); break ;
-        
-        case movingItem:
-        if(locked == true) {
-            RailItem anyClass = railItems.get(index);
-            if(keyCode == LEFT )	anyClass.turnLeft();											 // ROTATE THE OBJECT CCW		
-            if(keyCode == RIGHT)	anyClass.turnRight();											// ROTATE THE OBJECT CW
-            
-            if(index > railItems.size()) index = railItems.size();
-        }
-        
-        else {
-            for (int i = 0; i < railItems.size(); i++) {																	// move all objects
-                int Xoffset=0, Yoffset=0;
-                RailItem anyClass = railItems.get(i); 
+        switch(mode) 
+        {
+            case settingID:         display.setCursor( 7, 3 );  display.printNumber( number ); display.clearToEnd(); break ; // TODO, formed number should be directly updated
+            case settingInputPin:   display.setCursor( 7, 4 );  display.printNumber( number ); display.clearToEnd(); break ;
+            case settingOutputPin:  display.setCursor( 7, 5 );  display.printNumber( number ); display.clearToEnd(); break ;
+            case movingItem:
+            if( locked == true ) 
+            {
+                RailItem anyClass = railItems.get(index);
+                if(keyCode == LEFT )	anyClass.turnLeft();											 // ROTATE THE OBJECT CCW		
+                if(keyCode == RIGHT)	anyClass.turnRight();											// ROTATE THE OBJECT CW
                 
-                //if(key == 'q') gridSize+=10; 
-                //if(key == 'e') gridSize-=10;
-                //anyClass.setGridSize(gridSize);
-                
-                if(keyCode == DOWN ) Yoffset = +1;
-                if(keyCode == UP)	 Yoffset = -1;
-                if(keyCode == LEFT ) Xoffset = -1;
-                if(keyCode == RIGHT) Xoffset = +1; 
-                anyClass.setPos(anyClass.getColumn() + Xoffset, anyClass.getRow() + Yoffset);
-            } 
+                if(index > railItems.size()) index = railItems.size();
+            } else 
+            {
+                for (int i = 0; i < railItems.size(); i++) 
+                {																	// move all objects
+                    int Xoffset=0, Yoffset=0;
+                    RailItem anyClass = railItems.get(i); 
+                    
+                    if(keyCode == DOWN ) Yoffset = +1 ;
+                    if(keyCode == UP)	 Yoffset = -1 ;
+                    if(keyCode == LEFT ) Xoffset = -1 ;
+                    if(keyCode == RIGHT) Xoffset = +1 ; 
+                    anyClass.setPos(anyClass.getColumn() + Xoffset, anyClass.getRow() + Yoffset);
+                } 
+            }
+            break;
         }
-        break;
+        break ;
     }
 }
 
 int makeNumber(int _number, int lowerLimit, int upperLimit)
 {
     if(keyCode == BACKSPACE) _number /= 10;
-        else if(key >= '0' && key <= '9'){
-            if(number<100)_number *= 10;
-            _number += (key-'0');
-            _number = constrain(_number,lowerLimit,upperLimit);
-        }
-        println(_number);
-        return _number;
+    else if(key >= '0' && key <= '9')
+    {
+        if(number<100)_number *= 10;
+        _number += (key-'0');
+        _number = constrain(_number,lowerLimit,upperLimit);
+    }
+    println(_number);
+    return _number;
 }
 
 
