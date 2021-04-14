@@ -130,20 +130,19 @@ void setup() {
     display = new Display(gridSize*15, gridSize*33, gridSize*31, gridSize*32/3);
 }
 
-void draw() {
+
+void whipeScreen()
+{
     textSize(gridSize /4);
     textAlign(CENTER,CENTER);
     fill(200);
-
     stroke(255);
     rect(0,0,width,height); // clear screen 
     stroke(0);
-    
-    column = (gridSize/2+constrain(mouseX,0,width-2*gridSize)) / gridSize - 1;
-    row = (gridSize/2+constrain(mouseY,0,height-2*gridSize)) / gridSize - 1;
-    
-    drawGrid();						// draw items on the right
-    
+}
+
+void drawRightSideItems()
+{
     sw1.Draw();
     sw2.Draw();
     l1.Draw();
@@ -152,7 +151,10 @@ void draw() {
     m1.Draw();
     D1.Draw();
     S1.Draw();
+}
 
+void drawRailItems()
+{
     for (int i = 0; i < railItems.size(); i++) {	
         RailItem anyClass = railItems.get(i);
         if(anyClass instanceof Switch) 	  { Switch     sw = (Switch)    anyClass; sw.Draw();}
@@ -162,7 +164,10 @@ void draw() {
         if(anyClass instanceof Memory) 	  { Memory    mem = (Memory)    anyClass; mem.Draw();}
         if(anyClass instanceof Decoupler) { Decoupler dec = (Decoupler) anyClass; dec.Draw();}
         if(anyClass instanceof Signal) 	  { Signal    sig = (Signal)    anyClass; sig.Draw();} }
+}
 
+void drawTexts()
+{
     fill(0);
     textSize(gridSize/2 );
     textAlign(LEFT,CENTER);
@@ -189,6 +194,12 @@ void draw() {
     display.paint();
 }
 
+ void updateColumn()
+    {
+        column = (gridSize/2+constrain(mouseX,0,width-2*gridSize)) / gridSize - 1;
+        row = (gridSize/2+constrain(mouseY,0,height-2*gridSize)) / gridSize - 1;
+    }
+
 void drawGrid() {
     fill(255);
     stroke(0);
@@ -203,15 +214,37 @@ void drawGrid() {
 }
 
 
+/// ABOVE ARE ALL DRAW FUNCTIONS //////
+
+///////////////// MAIN LOOP /////////////
+void draw() {    
+    whipeScreen() ;
+    drawRightSideItems() ;
+    updateColumn() ;
+    drawGrid();						// draw items on the right
+    drawTexts() ;
+    drawRailItems() ;
+
+}
+
+/// BELOW ARE ALL EVENT functions
+
+//  mousePressed()
+//  mouseDragged()
+//  mouseReleased()
+//  keyPressed()
+
 void mousePressed()
 {	
     if(mouseX < width / 2 && mouseY > height - gridSize) saveLayout(); // works
     
     RailItem anyClass = railItems.get(0);
     
-    for (int i = 0; i < railItems.size(); i++) { 
+    for (int i = 0; i < railItems.size(); i++)
+    { 
         anyClass = railItems.get(i);																			// store the object in 'anyClass' 
-        if(column == anyClass.getColumn() && row == anyClass.getRow()) {	// get index of clicked item	 
+        if(column == anyClass.getColumn() && row == anyClass.getRow()) 	// get index of clicked item	 
+        {
             locked = true;
             index = i;
   
@@ -224,11 +257,14 @@ void mousePressed()
         } 
     }
     
-    if( mode == movingItem) {
-        if(mouseX > (width-2*gridSize)) { 
+    if( mode == movingItem) 
+    {
+        if(mouseX > (width-2*gridSize)) 
+        { 
             locked = true;
             println("new item created");
-            switch(row) {
+            switch(row) 
+            {
                 case 0: railItems.add( new Switch(   0,(width - 2 * gridSize)      / gridSize, 0, 2, gridSize,left )); println("SWITCH CREATED");    break;
                 case 1: railItems.add( new Switch(   0,(width - 2 * gridSize)      / gridSize, 0, 2, gridSize,right)); println("SWITCH CREATED");    break;
                 case 2: railItems.add( new Line(       (width - 2 * gridSize)      / gridSize, 2, 2, gridSize) );      println("LINE CREATED");      break;
@@ -246,7 +282,8 @@ void mousePressed()
 
 void mouseDragged()
 {
-    if(locked && mode == movingItem) {
+    if(locked && mode == movingItem) 
+    {
         RailItem anyClass = railItems.get(index);
         column = constrain( column, 0, 63 );
         row = constrain( row, 0, 31 );
@@ -334,12 +371,14 @@ int makeNumber(int _number, int lowerLimit, int upperLimit)
 }
 
 
-
-void saveLayout() {
+// loading and store functions
+void saveLayout() 
+{
     println("layout saved");
     output = createWriter("layout.csv");
     output.println(railItems.size());
-    for (int i = 0; i < railItems.size(); i++) {
+    for (int i = 0; i < railItems.size(); i++) 
+    {
         RailItem anyClass = railItems.get(i);
         if(anyClass instanceof Switch)		output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + ","  + anyClass.getType()+ ","); 
         if(anyClass instanceof Line)		output.println(anyClass.getItem() + ","	+ 0	                + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," ) ; 
@@ -358,7 +397,8 @@ void loadLayout()
 {
     println("layout loaded");
     input = createReader("layout.csv");
-    try{
+    try
+    {
         line = input.readLine();
     } 
     catch (IOException e) {}
@@ -366,18 +406,21 @@ void loadLayout()
     int size = Integer.parseInt(line);
     
     for(int j=0; j<size; j++) {
-        try {
+        try 
+        {
             line = input.readLine();
         } 
-        catch (IOException e) {
+        catch (IOException e) 
+        {
             line = null;
         }
-        
-        if (line == null) {
+        if (line == null) 
+        {
             // Stop reading because of an error or file is empty
             //noLoop();	
         } 
-        else {
+        else 
+        {
             String[] pieces = split(line, ',');
             int item        = Integer.parseInt( pieces[0] );	 // holds the type+
             int ID          = Integer.parseInt( pieces[1] );
@@ -385,8 +428,8 @@ void loadLayout()
             int row         = Integer.parseInt( pieces[3] );
             int direction   = Integer.parseInt( pieces[4] );
             
-            switch(item){
-
+            switch(item)
+            {
                 case 1: // switch
                 int type = Integer.parseInt(pieces[5]); // determen left or right switch
                         railItems.add( new Switch(   ID, column, row, direction, gridSize, type) ); break;
