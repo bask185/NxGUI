@@ -8,10 +8,11 @@ class Detection extends RailItem
     int[] signalStates = new int[256];
 
     // constructor
-    Detection(int ID, int Xpos, int Ypos, int direction, int gridSize)
+    Detection(int ID, int Xpos, int Ypos, int direction, int gridSize, int type)
     {
         super(Xpos, Ypos, direction, gridSize);
         this.ID = ID;
+        this.type = type ;
         item = 4;
         
         designation = str(ID);

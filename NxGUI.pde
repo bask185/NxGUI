@@ -78,7 +78,6 @@ int ID;
 
 int edgeOffset = 23;
 
-int number = 0;
 
 
 Switch sw1;
@@ -116,21 +115,22 @@ void setup() {
     background(255);
     //fullScreen();
 
-    sw1 = new Switch(	0,	(width-gridSize-edgeOffset) / gridSize, 0, 2, gridSize, 1); // make default Objects to display on the right side of the UI
-    sw2 = new Switch(	0,	(width-gridSize-edgeOffset) / gridSize, 1, 2, gridSize, 2);
-    l1 =  new Line(			(width-gridSize-edgeOffset) / gridSize, 2, 2, gridSize);
-    c1 =  new Curve(		(width-gridSize-edgeOffset) / gridSize, 3, 2, gridSize);
-    d1 =  new Detection(0,	(width-gridSize-edgeOffset) / gridSize, 4, 2, gridSize);
-    m1 =  new Memory(	0,	(width-gridSize-edgeOffset) / gridSize, 5, 2, gridSize);
-    D1 =  new Decoupler(0,	(width-gridSize-edgeOffset) / gridSize, 6, 2, gridSize);
-    S1 =  new Signal(   0,  (width-gridSize-edgeOffset) / gridSize, 7, 0, gridSize, 0);
+    sw1 = new Switch(	0,	(width-gridSize-edgeOffset) / gridSize, 0, 2, gridSize, 1, 1); // make default Objects to display on the right side of the UI
+    sw2 = new Switch(	0,	(width-gridSize-edgeOffset) / gridSize, 1, 2, gridSize, 1, 2);
+    l1 =  new Line(			(width-gridSize-edgeOffset) / gridSize, 2, 2, gridSize );
+    c1 =  new Curve(		(width-gridSize-edgeOffset) / gridSize, 3, 2, gridSize );
+    d1 =  new Detection(0,	(width-gridSize-edgeOffset) / gridSize, 4, 2, gridSize, 1   );
+    m1 =  new Memory(	0,	(width-gridSize-edgeOffset) / gridSize, 5, 2, gridSize, 1   );
+    D1 =  new Decoupler(0,	(width-gridSize-edgeOffset) / gridSize, 6, 2, gridSize, 1   );
+    S1 =  new Signal(   0,  (width-gridSize-edgeOffset) / gridSize, 7, 0, gridSize, 1   );
 
     loadLayout();
 
     display = new Display(gridSize*15, gridSize*33, gridSize*31, gridSize*32/3);
 }
 
-void draw() {
+void draw() 
+{
     textSize(gridSize /4);
     textAlign(CENTER,CENTER);
     fill(200);
@@ -155,13 +155,13 @@ void draw() {
 
     for (int i = 0; i < railItems.size(); i++) {	
         RailItem anyClass = railItems.get(i);
-        if(anyClass instanceof Switch) 	  { Switch     sw = (Switch)    anyClass; sw.Draw();}
+        if(anyClass instanceof Switch) 	  { Switch sw = (Switch) anyClass; sw.Draw();}
         if(anyClass instanceof Detection) { Detection det = (Detection) anyClass; det.Draw();}
-        if(anyClass instanceof Line) 	  { Line       ln = (Line)      anyClass; ln.Draw();}
-        if(anyClass instanceof Curve) 	  { Curve      cv = (Curve)     anyClass; cv.Draw();}
-        if(anyClass instanceof Memory) 	  { Memory    mem = (Memory)    anyClass; mem.Draw();}
+        if(anyClass instanceof Line) 	  { Line ln = (Line) anyClass; ln.Draw();}
+        if(anyClass instanceof Curve) 	  { Curve cv = (Curve) anyClass; cv.Draw();}
+        if(anyClass instanceof Memory) 	  { Memory mem = (Memory) anyClass; mem.Draw();}
         if(anyClass instanceof Decoupler) { Decoupler dec = (Decoupler) anyClass; dec.Draw();}
-        if(anyClass instanceof Signal) 	  { Signal    sig = (Signal)    anyClass; sig.Draw();} }
+        if(anyClass instanceof Signal) 	  { Signal sig = (Signal) anyClass; sig.Draw();} }
 
     fill(0);
     textSize(gridSize/2 );
@@ -206,7 +206,7 @@ void drawGrid() {
 void mousePressed()
 {	
     if(mouseX < width / 2 && mouseY > height - gridSize) saveLayout(); // works
-    
+    //if(mouseX > width / 2 && mouseY > height - gridSize) loadLayout(); // WORK IN PROGRESS
     RailItem anyClass = railItems.get(0);
     
     for (int i = 0; i < railItems.size(); i++) { 
@@ -218,29 +218,43 @@ void mousePressed()
             display.printAt(0,2, "ID         = "); display.printNumber( anyClass.getID()       ) ; display.clearToEnd();
             display.printAt(0,3, "INPUT PIN  = "); display.printNumber( anyClass.getPin()      ) ; display.clearToEnd();
             display.printAt(0,4, "OUTPUT PIN = "); display.printNumber( anyClass.getLinkedPin()) ; display.clearToEnd();
-            display.printAt(0,5, "type = "); display.store( types[ anyClass.getType() ] ) ;
+            display.printAt(0,5, "type       = "); display.store( types[ anyClass.getType() ] ) ;
+
             // if(anyClass instanceof Switch) 		print("SWITCH ");
+            // if(anyClass instanceof Line)	 	    print("LINE ");
+            // if(anyClass instanceof Curve) 		print("CURVE ");
+            // if(anyClass instanceof Memory) 		print("MEMORY ");
+            // if(anyClass instanceof Detection) 	print("DETECTOR ");
+            // if(anyClass instanceof Detection) 	print("DECOUPLER ");
+            // if(anyClass instanceof Signal) 		print("SIGNAL ");
+            // println("SELECTED");
             break;
         } 
     }
     
-    if( mode == movingItem) {
+    switch(mode) {        
+     
+        case movingItem:
         if(mouseX > (width-2*gridSize)) { 
             locked = true;
             println("new item created");
             switch(row) {
-                case 0: railItems.add( new Switch(   0,(width - 2 * gridSize)      / gridSize, 0, 2, gridSize,left )); println("SWITCH CREATED");    break;
-                case 1: railItems.add( new Switch(   0,(width - 2 * gridSize)      / gridSize, 0, 2, gridSize,right)); println("SWITCH CREATED");    break;
-                case 2: railItems.add( new Line(       (width - 2 * gridSize)      / gridSize, 2, 2, gridSize) );      println("LINE CREATED");      break;
-                case 4: railItems.add( new Detection(0,(width - 2 * gridSize)      / gridSize, 4, 2, gridSize) );      println("DETECTOR CREATED");  break;
-                case 3: railItems.add( new Curve(      (width - 2 * gridSize)      / gridSize, 3, 2, gridSize) );      println("CURVE CREATED");     break;
-                case 5: railItems.add( new Memory(   0,(width-gridSize-edgeOffset) / gridSize, 5, 0, gridSize) );      println("MEMORY CREATED");    break;
-                case 6: railItems.add( new Decoupler(0,(width-gridSize-edgeOffset) / gridSize, 6, 0, gridSize) );      println("DECOUPLER CREATED"); break;
-                case 7: railItems.add( new Signal(   0,(width-gridSize-edgeOffset) / gridSize, 7, 0, gridSize,0));     println("SIGNAL CREATED");    break;
+                case 0: railItems.add( new Switch(           0,(width-2*gridSize)/gridSize, 0, 2, gridSize,1,left )); println("SWITCH CREATED");    break;
+                case 1: railItems.add( new Switch(           0,(width-2*gridSize)/gridSize, 0, 2, gridSize,1,right)); println("SWITCH CREATED");    break;
+                case 2: railItems.add( new Line(               (width-2*gridSize)/gridSize, 2, 2, gridSize) );      println("LINE CREATED");      break;
+                case 3: railItems.add( new Curve(              (width-2*gridSize)/gridSize, 3, 2, gridSize) );      println("CURVE CREATED");     break;
+                case 4: railItems.add( new Detection(        0,(width-2*gridSize)/gridSize, 4, 2, gridSize,1) );      println("DETECTOR CREATED");  break;
+                case 5: railItems.add( new Memory(   0,(width-gridSize-edgeOffset)/gridSize,5, 0, gridSize,1) );      println("MEMORY CREATED");    break;
+                case 6: railItems.add( new Decoupler(0,(width-gridSize-edgeOffset)/gridSize,6, 0, gridSize,1) );      println("DECOUPLER CREATED"); break;
+                case 7: railItems.add( new Signal(0,(width-gridSize-edgeOffset) / gridSize, 7, 0,gridSize,0));      println("SIGNAL CREATED");    break;
             }
             index = railItems.size() - 1;
         }
-    }
+        break;
+        
+        case deletingItem:
+        break;
+    }		
 }
       
 
@@ -250,7 +264,8 @@ void mouseDragged()
         RailItem anyClass = railItems.get(index);
         column = constrain( column, 0, 63 );
         row = constrain( row, 0, 31 );
-        anyClass.setPos(column,row);            // update positon of selected object
+
+        anyClass.setPos(column,row);
     }
 }
 
@@ -258,78 +273,121 @@ void mouseDragged()
 
 void mouseReleased()
 {
-    locked = false;
-
-    if(mode == deletingItem)
-    {
-        if( railItems.size() > 0 && index < railItems.size() ) // N.B. TODO. if you click on empty space you will delete elements from the railItem list. a coordinate check is needed
-        {
+    switch(mode) {
+        
+        case movingItem:
+        locked = false;
+        break;
+        
+        case deletingItem:
+        if(railItems.size()>0 && index < railItems.size())
             railItems.remove(index);		// DELETE THE OBJECT
-        }
+        locked=false;
+        break;
     }
 }
+
 
 
 void keyPressed()
-{
-    switch (key)
-    {
-        case 'm':case 'M': display.printAt(0,0,       "MOVING ITEM"); display.clearToEnd(); mode = movingItem; break;
-        case 'd':case 'D': display.printAt(0,0,     "DELETING ITEM"); display.clearToEnd(); mode = deletingItem; break;
-        case 'n':case 'N': display.printAt(0,0,        "SETTING ID"); display.clearToEnd(); mode = settingID ; break;
-        case 'i':case 'I': display.printAt(0,0, "SETTING INPUT PIN"); display.clearToEnd(); mode = settingInputPin; break;
-        case 'o':case 'O': display.printAt(0,0,"SETTING OUTPUT PIN"); display.clearToEnd(); mode = settingOutputPin; break;
-        case 't':case 'T': display.printAt(0,0,    "CHANGE IO TYPE"); display.clearToEnd(); mode = settingType; break ;
+{	
+    switch (key){
         
-        default: // all other caracters
+    case 'm':case 'M': display.printAt(0,0,       "MOVING ITEM"); display.clearToEnd(); mode = movingItem; break;
+    case 'd':case 'D': display.printAt(0,0,     "DELETING ITEM"); display.clearToEnd(); mode = deletingItem; break;
+    case 'n':case 'N': display.printAt(0,0,        "SETTING ID"); display.clearToEnd(); mode = settingID ; break;
+    case 'i':case 'I': display.printAt(0,0, "SETTING INPUT PIN"); display.clearToEnd(); mode = settingInputPin; break;
+    case 'o':case 'O': display.printAt(0,0,"SETTING OUTPUT PIN"); display.clearToEnd(); mode = settingOutputPin; break;
+    case 'T':case 't': display.printAt(0,0,    "CHANGE IO TYPE"); display.clearToEnd(); mode = settingType; break ;
+ 
+    }
+    
+    //if(keyCode == ENTER)
+    {
+    RailItem anyClass = railItems.get(index);
 
-        if (keyCode == ENTER) number = 0 ;
-        else number = makeNumber(number,0,255);
+    switch(mode)
+    {
+        
 
+        case settingID:
+        int localVar = anyClass.getID() ; 
+        localVar = makeNumber(localVar,0,255,13,2); 
+        anyClass.setID(localVar) ;  
+        break;
 
-        switch(mode) 
+        case settingInputPin:  
+        int localVar1 = anyClass.getPin() ; 
+        localVar1 = makeNumber(localVar1,0,255,13,3); 
+        anyClass.setPin(localVar1) ;  
+        break;
+
+        case settingOutputPin:  
+        int localVar2 = anyClass.getLinkedPin() ; 
+        localVar2 = makeNumber(localVar2,0,255,13,4); 
+        anyClass.setLinkedPin(localVar2) ;  
+        break;
+
+        case settingType:
+        int localVar3 = anyClass.getType();
+        localVar3 = makeNumber(localVar3,0,13,13,5);
+        display.printAt(13,5,types[localVar3]);
+        anyClass.setType(localVar3) ;
+        break; 
+    }
+    }
+    
+    if( mode == movingItem ) 
+    {
+        if(locked == true) 
         {
-            case settingID:         display.setCursor( 7, 3 );  display.printNumber( number ); display.clearToEnd(); break ; // TODO, formed number should be directly updated
-            case settingInputPin:   display.setCursor( 7, 4 );  display.printNumber( number ); display.clearToEnd(); break ;
-            case settingOutputPin:  display.setCursor( 7, 5 );  display.printNumber( number ); display.clearToEnd(); break ;
-            case movingItem:
-            if( locked == true ) 
-            {
-                RailItem anyClass = railItems.get(index);
-                if(keyCode == LEFT )	anyClass.turnLeft();											 // ROTATE THE OBJECT CCW		
-                if(keyCode == RIGHT)	anyClass.turnRight();											// ROTATE THE OBJECT CW
-                
-                if(index > railItems.size()) index = railItems.size();
-            } else 
-            {
-                for (int i = 0; i < railItems.size(); i++) 
-                {																	// move all objects
-                    int Xoffset=0, Yoffset=0;
-                    RailItem anyClass = railItems.get(i); 
-                    
-                    if(keyCode == DOWN ) Yoffset = +1 ;
-                    if(keyCode == UP)	 Yoffset = -1 ;
-                    if(keyCode == LEFT ) Xoffset = -1 ;
-                    if(keyCode == RIGHT) Xoffset = +1 ; 
-                    anyClass.setPos(anyClass.getColumn() + Xoffset, anyClass.getRow() + Yoffset);
-                } 
-            }
-            break;
+            RailItem anyClass = railItems.get(index);
+            if(keyCode == LEFT )	anyClass.turnLeft();											 // ROTATE THE OBJECT CCW		
+            if(keyCode == RIGHT)	anyClass.turnRight();											// ROTATE THE OBJECT CW
+            
+            if(index > railItems.size()) index = railItems.size();
         }
-        break ;
+        else 
+        {
+            for (int i = 0; i < railItems.size(); i++) 
+            {																	// move all objects
+                int Xoffset=0, Yoffset=0;
+                RailItem anyClass = railItems.get(i); 
+                
+                //if(key == 'q') gridSize+=10; 
+                //if(key == 'e') gridSize-=10;
+                //anyClass.setGridSize(gridSize);
+                
+                if(keyCode == DOWN ) Yoffset = +1;
+                if(keyCode == UP)	 Yoffset = -1;
+                if(keyCode == LEFT ) Xoffset = -1;
+                if(keyCode == RIGHT) Xoffset = +1; 
+                anyClass.setPos(anyClass.getColumn() + Xoffset, anyClass.getRow() + Yoffset);
+            } 
+        }
     }
 }
 
-int makeNumber(int _number, int lowerLimit, int upperLimit)
+int makeNumber(int _number, int lowerLimit, int upperLimit, int _X, int _Y )
 {
-    if(keyCode == BACKSPACE) _number /= 10;
-    else if(key >= '0' && key <= '9')
+    //if( (key >= '0' && key <= '9') || keyCode == BACKSPACE || keyCode == LEFT || keyCode == RIGHT )
+    //{
+         if(keyCode ==  LEFT       ) { _number -- ;             }
+    else if(keyCode == RIGHT       ) { _number ++ ;             }
+    else if( _number == upperLimit ) { _number = ( key-'0' ) ;  }
+    else if(keyCode == BACKSPACE   ) { _number /= 10;           }
+    else if( key >= '0' && key <= '9') 
     {
-        if(number<100)_number *= 10;
-        _number += (key-'0');
-        _number = constrain(_number,lowerLimit,upperLimit);
+        _number *= 10;
+        _number += ( key-'0' );
     }
-    println(_number);
+
+    _number = constrain(_number,lowerLimit,upperLimit);
+    display.printNumberAt(_X, _Y , _number ) ;
+    display.clearToEnd();
+    
+    println(_number);    
+
     return _number;
 }
 
@@ -339,15 +397,16 @@ void saveLayout() {
     println("layout saved");
     output = createWriter("layout.csv");
     output.println(railItems.size());
-    for (int i = 0; i < railItems.size(); i++) {
+    for (int i = 0; i < railItems.size(); i++)
+    {
         RailItem anyClass = railItems.get(i);
-        if(anyClass instanceof Switch)		output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + ","  + anyClass.getType()+ ","); 
-        if(anyClass instanceof Line)		output.println(anyClass.getItem() + ","	+ 0	                + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," ) ; 
-        if(anyClass instanceof Curve)		output.println(anyClass.getItem() + ","	+ 0                 + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," ) ;
-        if(anyClass instanceof Signal)      output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," ) ; 
-        if(anyClass instanceof Decoupler)	output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," ) ;
-        if(anyClass instanceof Memory)	    output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," ) ; 
-        if(anyClass instanceof Detection) 	output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," ) ;
+        if(anyClass instanceof Switch)		output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType()+ "," + anyClass.getLR() ) ;
+        if(anyClass instanceof Line)		output.println(anyClass.getItem() + ","	+ 0	                + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() ) ;
+        if(anyClass instanceof Curve)		output.println(anyClass.getItem() + ","	+ 0                 + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() ) ;
+        if(anyClass instanceof Signal)      output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() ) ;
+        if(anyClass instanceof Decoupler)	output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() ) ;
+        if(anyClass instanceof Memory)	    output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() ) ;
+        if(anyClass instanceof Detection) 	output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() ) ;
     }
     output.close();
     display.printAt(0,0, "LAYOUT SAVED"); display.clearToEnd();
@@ -384,18 +443,19 @@ void loadLayout()
             int column      = Integer.parseInt( pieces[2] );
             int row         = Integer.parseInt( pieces[3] );
             int direction   = Integer.parseInt( pieces[4] );
+            int type        = Integer.parseInt( pieces[5] );
             
             switch(item){
 
                 case 1: // switch
-                int type = Integer.parseInt(pieces[5]); // determen left or right switch
-                        railItems.add( new Switch(   ID, column, row, direction, gridSize, type) ); break;
-                case 2: railItems.add( new Line(         column, row, direction, gridSize ) );    break;
-                case 3: railItems.add( new Curve(        column, row, direction, gridSize ) );    break;
-                case 4: railItems.add( new Detection(ID, column, row, direction, gridSize ) );    RailItem  anyClass = railItems.get(j); break;
-                case 5: railItems.add( new Memory	(ID, column, row, direction, gridSize ) );    RailItem anyClass2 = railItems.get(j); break;
-                case 6: railItems.add(new Decoupler( ID, column, row, direction, gridSize ) );    break;
-                case 7: railItems.add(new Signal(    ID, column, row, direction, gridSize, 1) );  break;
+                int LR = Integer.parseInt(pieces[6]); // determen left or right switch
+                        railItems.add( new Switch(    ID, column, row, direction, gridSize, type, LR  ) );    break;
+                case 2: railItems.add( new Line(          column, row, direction, gridSize            ) );    break;
+                case 3: railItems.add( new Curve(         column, row, direction, gridSize            ) );    break;
+                case 4: railItems.add( new Detection( ID, column, row, direction, gridSize, type      ) );    break;
+                case 5: railItems.add( new Memory	( ID, column, row, direction, gridSize, type      ) );    break;
+                case 6: railItems.add( new Decoupler( ID, column, row, direction, gridSize, type      ) );    break;
+                case 7: railItems.add( new Signal(    ID, column, row, direction, gridSize, type      ) );    break;
             }
         }
     } 

@@ -5,10 +5,11 @@ class Memory extends RailItem
   int[] attachedSwitches = new int[256];
   int[] switchStates = new int[256];
   
-  Memory(int ID, int Xpos, int Ypos, int direction, int gridSize)
+  Memory(int ID, int Xpos, int Ypos, int direction, int gridSize, int type)
   {
     super(Xpos, Ypos, direction, gridSize);
     this.ID = ID;
+    this.type = type ;
     item = 5;
     
     designation = str(ID);

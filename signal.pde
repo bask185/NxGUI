@@ -2,14 +2,14 @@ class Signal extends RailItem{
 // variables
 
 // constructor
-Signal(int ID, int Xpos, int Ypos, int direction, int gridSize, int state) {
-        super(Xpos, Ypos, direction, gridSize);
-        this.type = type;
-        this.ID = ID;
-        this.state = state;
-        item = 7;
-        designation = str(ID);
-    }
+Signal(int ID, int Xpos, int Ypos, int direction, int gridSize, int type) {
+    super(Xpos, Ypos, direction, gridSize);
+    this.type = type;
+    this.ID = ID;
+    //this.state = state;
+    item = 7;
+    designation = str(ID);
+}
 
 // functions
 

@@ -50,9 +50,10 @@ class Display {  // 40 x 16
 
 void store(String str ) {
 	byte index = 0 ;
-	for(index = 0 ; index < str.length() ; index++ ) {
-	text[column][row].setText(str.charAt(index), c[2]); // safes any lettre with colour as arguement
-	if(column < colMax) column++;
+	for(index = 0 ; index < str.length() ; index++ ) 
+  {
+	  text[column][row].setText(str.charAt(index), c[2]); // safes any lettre with colour as arguement
+	  if(column < colMax) column++;
 	}
 }
 
