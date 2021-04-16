@@ -3,10 +3,11 @@ class Decoupler extends RailItem
   // variables
   
   // constructor
-  Decoupler(int ID, int Xpos, int Ypos, int direction , int gridSize) 
+  Decoupler(int ID, int Xpos, int Ypos, int direction , int gridSize, int type) 
   {
     super(Xpos, Ypos, direction, gridSize);
     this.ID = ID;
+    this.type = type ;
     designation = str(ID);
     item = 6;
   }

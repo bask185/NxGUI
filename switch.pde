@@ -4,7 +4,7 @@
 	int  LR ;
 		
 	// constructor
-	Switch(int ID, int Xpos, int Ypos, int direction, int gridSize, int LR ) {
+	Switch(int ID, int Xpos, int Ypos, int direction, int gridSize, int type, int LR ) {
 		super(Xpos, Ypos, direction, gridSize);
 		this.LR =  LR;
 		this.ID = ID;
@@ -13,6 +13,10 @@
 		designation = str(ID);
 	}
 
+	void getLR()
+	{
+		return LR ;
+	}
 
 	void Draw()
 	{
