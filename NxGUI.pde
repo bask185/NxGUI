@@ -206,10 +206,10 @@ void mousePressed()
 {	
     if(mouseX < width / 2 && mouseY > height - gridSize) saveLayout(); // works
     //if(mouseX > width / 2 && mouseY > height - gridSize) loadLayout(); // WORK IN PROGRESS
-    RailItem anyClass = railItems.get(0);
+  //  RailItem anyClass = railItems.get(0);
     
     for (int i = 0; i < railItems.size(); i++) { 
-        anyClass = railItems.get(i);																			// store the object in 'anyClass' 
+        RailItem anyClass = railItems.get(i);																			// store the object in 'anyClass' 
         if(column == anyClass.getColumn() && row == anyClass.getRow()) {	// get index of clicked item	 
             locked = true;
             index = i;
@@ -228,7 +228,8 @@ void mousePressed()
             // if(anyClass instanceof Signal) 		print("SIGNAL ");
             // println("SELECTED");
             break;
-        } 
+        }
+        else index = 0 ;
     }
     
     switch(mode) {        
@@ -279,8 +280,10 @@ void mouseReleased()
         break;
         
         case deletingItem:
-        if(railItems.size()>0 && index < railItems.size())
+        if(railItems.size() > 0 && index < railItems.size())
+        {
             railItems.remove(index);		// DELETE THE OBJECT
+        }
         locked=false;
         break;
     }
@@ -300,40 +303,38 @@ void keyPressed()
  
     }
     
-    //if(keyCode == ENTER)
     {
-    RailItem anyClass = railItems.get(index);
+        RailItem anyClass = railItems.get(index);
+        switch(mode)
+        {
+            
+            default: // all other caracters
 
-    switch(mode)
-    {
-        
-        default: // all other caracters
+            case settingID:
+            int localVar = anyClass.getID() ; 
+            localVar = makeNumber(localVar,0,255,13,2); 
+            anyClass.setID(localVar) ;  
+            break;
 
-        case settingID:
-        int localVar = anyClass.getID() ; 
-        localVar = makeNumber(localVar,0,255,13,2); 
-        anyClass.setID(localVar) ;  
-        break;
+            case settingInputPin:  
+            int localVar1 = anyClass.getPin() ; 
+            localVar1 = makeNumber(localVar1,0,255,13,3); 
+            anyClass.setPin(localVar1) ;  
+            break;
 
-        case settingInputPin:  
-        int localVar1 = anyClass.getPin() ; 
-        localVar1 = makeNumber(localVar1,0,255,13,3); 
-        anyClass.setPin(localVar1) ;  
-        break;
+            case settingOutputPin:  
+            int localVar2 = anyClass.getLinkedPin() ; 
+            localVar2 = makeNumber(localVar2,0,255,13,4); 
+            anyClass.setLinkedPin(localVar2) ;  
+            break;
 
-        case settingOutputPin:  
-        int localVar2 = anyClass.getLinkedPin() ; 
-        localVar2 = makeNumber(localVar2,0,255,13,4); 
-        anyClass.setLinkedPin(localVar2) ;  
-        break;
-
-        case settingType:
-        int localVar3 = anyClass.getType();
-        localVar3 = makeNumber(localVar3,0,13,13,5);
-        display.printAt(13,5,types[localVar3]);
-        anyClass.setType(localVar3) ;
-        break; 
-    }
+            case settingType:
+            int localVar3 = anyClass.getType();
+            localVar3 = makeNumber(localVar3,0,13,13,5);
+            display.printAt(13,5,types[localVar3]);
+            anyClass.setType(localVar3) ;
+            break; 
+        }
     }
     
     if( mode == movingItem ) 
@@ -364,7 +365,6 @@ void keyPressed()
                 anyClass.setPos(anyClass.getColumn() + Xoffset, anyClass.getRow() + Yoffset);
             } 
         }
-        break ;
     }
 }
 
@@ -400,7 +400,7 @@ void saveLayout() {
     for (int i = 0; i < railItems.size(); i++)
     {
         RailItem anyClass = railItems.get(i);
-        if(anyClass instanceof Switch)		output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType()+ "," + anyClass.getLR() ) ;
+        if(anyClass instanceof Switch)		output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() + "," + anyClass.getLR() ) ;
         if(anyClass instanceof Line)		output.println(anyClass.getItem() + ","	+ 0	                + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() ) ;
         if(anyClass instanceof Curve)		output.println(anyClass.getItem() + ","	+ 0                 + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() ) ;
         if(anyClass instanceof Signal)      output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() ) ;
@@ -444,6 +444,7 @@ void loadLayout()
             int row         = Integer.parseInt( pieces[3] );
             int direction   = Integer.parseInt( pieces[4] );
             int type        = Integer.parseInt( pieces[5] );
+
             
             switch(item){
 

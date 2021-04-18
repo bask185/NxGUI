@@ -39,6 +39,7 @@ class RailItem{
 
   int ID ;
   int type ;
+  int LR ;
 
   int pin ;           // some devices have both an input as well as an output such as a occupancy detector
   int linkedPin ;
@@ -61,22 +62,29 @@ class RailItem{
   }
   
   
-  RailItem(int Xpos, int Ypos, int direction, int gridSize)
+  RailItem(int Xpos, int Ypos, int direction, int gridSize )
   {
     this.Xpos = gridSize + Xpos * gridSize;
     this.Ypos = gridSize + Ypos * gridSize;
     this.direction = direction;
     this.gridSize = gridSize;
+   // this.type = type ;
     halveSize = gridSize / 2;
     quarterSize = halveSize / 2;
     column = Xpos;
     row = Ypos;
   }
 
+  int getLR()
+	{
+		return LR ;
+	}
+
   void recordPositions()  // this function is to make sure that all variables are set after a new railItem is put in place
   {
 
   }
+
 
   int getPin()
   {

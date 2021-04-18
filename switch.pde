@@ -1,7 +1,6 @@
 	class Switch extends RailItem
 	{
 	// variables
-	int  LR ;
 		
 	// constructor
 	Switch(int ID, int Xpos, int Ypos, int direction, int gridSize, int type, int LR ) {
@@ -13,10 +12,6 @@
 		designation = str(ID);
 	}
 
-	void getLR()
-	{
-		return LR ;
-	}
 
 	void Draw()
 	{
