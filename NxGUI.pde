@@ -451,12 +451,17 @@ void saveLayout() {
     for (int i = 0; i < railItems.size(); i++)
     {
         RailItem anyClass = railItems.get(i);
+        
         int ID          = anyClass.getID() ;
         int type        = anyClass.getType() ;
         int inputPin    = anyClass.getInput() ;
         int outputPin   = anyClass.getOutput() ;
 
-        output.println( ID + "," + type + "," + inputPin + "," + outputPin ) ;
+        if( type != curve_ && type != line_ ) 
+        {
+            output.println( ID + "," + type + "," + inputPin + "," + outputPin ) ;
+        }
+
     }
 
     output.close();
