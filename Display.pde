@@ -80,7 +80,7 @@ void store(int number)
 }
 
 
-  void paint() {
+void paint() {
     fill(0);
     stroke(0);                    // white outline 
     rect(Xpos, Ypos, Xsize, Ysize); // draws new black rectangle over old one

@@ -19,41 +19,42 @@ final int settingOutputPin = 6;
 final int settingType = 7;
 
 
-enum types
-{
-    start_stop_sw           ,   // I2C input
-    relay_sw                ,   // I2C input
-    occupancy_1_I2C         ,   // I2C input
-    occupancy_2_I2C         ,   // I2C input
-    route_led               ,   // I2C output
-    occupance_led_1         ,   // I2C output
-    occupance_led_2         ,   // I2C output
-    point_pulse             ,   // I2C output
-    point_relay             ,   // I2C output
-    relay_I2C               ,   // I2C output
-    relay_DCC               ,   // Xnet/DCC output
-    point_DCC               ,   // Xnet/DCC output
-    occupancy_1_Xnet        ,   // Xnet input message
-    occupancy_2_Xnet            // Xnet input message
-} ;
+
+final int start_stop_sw     =  1 ;   // I2C input
+final int relay_sw          =  2 ;   // I2C input
+final int occupancy_1_I2C   =  3 ;   // I2C input
+final int occupancy_2_I2C   =  4 ;   // I2C input
+final int occupancy_1_Xnet  =  5 ;   // Xnet input message
+final int occupancy_2_Xnet  =  6 ;   // Xnet input message
+final int point_pulse       =  7 ;   // I2C output
+final int point_relay       =  8 ;   // I2C output
+final int point_DCC         =  9 ;    // Xnet/DCC output
+final int relay_I2C         = 10 ;   // I2C output
+final int relay_DCC         = 11 ;   // Xnet/DCC output
+final int line_             = 12 ;   // just a line
+final int curve_            = 13 ;   // just a curve
+
+
+
+
+
 
 int typeIndex ;
 String[] types = 
 {
-    "start stop sw",
+    "start_stop sw",
     "relay sw",
     "occupancy 1 I2C",
     "occupancy 2 I2C",
-    "route led",
-    "occupance led 1",
-    "occupance led 2",
+    "occupancy 1 Xnet",
+    "occupancy 2 Xnet",
     "point pulse",
     "point relay",
+    "point DCC",
     "relay I2C",
     "relay DCC",
-    "point DCC",
-    "occupancy 1 Xnet",
-    "occupancy 2 Xnet"
+    "line",
+    "curve"    
 };
 
 final int NA = 255 ;            // not available = 255 
@@ -74,7 +75,7 @@ int selector;
 int row;
 int column;
 
-int ID;
+//int ID;
 
 int edgeOffset = 23;
 
@@ -87,6 +88,7 @@ Detection d1;
 Memory m1;
 Decoupler D1;
 Signal S1;
+Output out1 ;
 
 //SSP ssp1;
 Display display;
@@ -114,14 +116,15 @@ void setup() {
     background(255);
     //fullScreen();
 
-    sw1 = new Switch(	0,	(width-gridSize-edgeOffset) / gridSize, 0, 2, gridSize, 1, 1); // make default Objects to display on the right side of the UI
-    sw2 = new Switch(	0,	(width-gridSize-edgeOffset) / gridSize, 1, 2, gridSize, 1, 2);
-    l1 =  new Line(			(width-gridSize-edgeOffset) / gridSize, 2, 2, gridSize );
-    c1 =  new Curve(		(width-gridSize-edgeOffset) / gridSize, 3, 2, gridSize );
-    d1 =  new Detection(0,	(width-gridSize-edgeOffset) / gridSize, 4, 2, gridSize, 1   );
-    m1 =  new Memory(	0,	(width-gridSize-edgeOffset) / gridSize, 5, 2, gridSize, 1   );
-    D1 =  new Decoupler(0,	(width-gridSize-edgeOffset) / gridSize, 6, 2, gridSize, 1   );
-    S1 =  new Signal(   0,  (width-gridSize-edgeOffset) / gridSize, 7, 0, gridSize, 1   );
+    sw1 = new Switch(	0,	(width-gridSize-edgeOffset) / gridSize, 0, 2, gridSize, point_relay, 0, 0, 1); // make default Objects to display on the right side of the UI
+    sw2 = new Switch(	0,	(width-gridSize-edgeOffset) / gridSize, 1, 2, gridSize, point_relay, 0, 0, 2);
+    l1 =  new Line(			(width-gridSize-edgeOffset) / gridSize, 2, 2, gridSize, line_ );
+    c1 =  new Curve(		(width-gridSize-edgeOffset) / gridSize, 3, 2, gridSize, curve_);
+    d1 =  new Detection(0,	(width-gridSize-edgeOffset) / gridSize, 4, 2, gridSize, occupancy_1_I2C, 0, 0   );
+    m1 =  new Memory(	0,	(width-gridSize-edgeOffset) / gridSize, 5, 2, gridSize, start_stop_sw, 0, 0   );
+    D1 =  new Decoupler(0,	(width-gridSize-edgeOffset) / gridSize, 6, 2, gridSize, relay_I2C, 0, 0   );
+    S1 =  new Signal(   0,  (width-gridSize-edgeOffset) / gridSize, 7, 2, gridSize, 1, 0, 0   );              // signal not yet fully implemented
+    out1= new Output(       (width-gridSize-edgeOffset) / gridSize, 8, 2, gridSize, 1, 0, 0   );
 
     loadLayout();
 
@@ -151,6 +154,7 @@ void draw()
     m1.Draw();
     D1.Draw();
     S1.Draw();
+    out1.Draw();
 
     for (int i = 0; i < railItems.size(); i++) {	
         RailItem anyClass = railItems.get(i);
@@ -213,20 +217,14 @@ void mousePressed()
         if(column == anyClass.getColumn() && row == anyClass.getRow()) {	// get index of clicked item	 
             locked = true;
             index = i;
-  
-            display.printAt(0,2, "ID         = "); display.printNumber( anyClass.getID()       ) ; display.clearToEnd();
-            display.printAt(0,3, "INPUT PIN  = "); display.printNumber( anyClass.getPin()      ) ; display.clearToEnd();
-            display.printAt(0,4, "OUTPUT PIN = "); display.printNumber( anyClass.getLinkedPin()) ; display.clearToEnd();
-            display.printAt(0,5, "type       = "); display.store( types[ anyClass.getType() ] ) ;
 
-            // if(anyClass instanceof Switch) 		print("SWITCH ");
-            // if(anyClass instanceof Line)	 	    print("LINE ");
-            // if(anyClass instanceof Curve) 		print("CURVE ");
-            // if(anyClass instanceof Memory) 		print("MEMORY ");
-            // if(anyClass instanceof Detection) 	print("DETECTOR ");
-            // if(anyClass instanceof Detection) 	print("DECOUPLER ");
-            // if(anyClass instanceof Signal) 		print("SIGNAL ");
-            // println("SELECTED");
+            try {
+                display.printAt(0,2, "ID         = "); display.printNumber( anyClass.getID()      ) ; display.clearToEnd();
+                display.printAt(0,3, "INPUT PIN  = "); display.printNumber( anyClass.getInput()   ) ; display.clearToEnd();
+                display.printAt(0,4, "OUTPUT PIN = "); display.printNumber( anyClass.getOutput()  ) ; display.clearToEnd();
+                display.printAt(0,5, "type       = "); display.store( types[ anyClass.getType() ] ) ; display.clearToEnd();
+            }
+            catch( ArrayIndexOutOfBoundsException e ) {;}
             break;
         }
         else index = 0 ;
@@ -239,14 +237,14 @@ void mousePressed()
             locked = true;
             println("new item created");
             switch(row) {
-                case 0: railItems.add( new Switch(           0,(width-2*gridSize)/gridSize, 0, 2, gridSize,1,left )); println("SWITCH CREATED");    break;
-                case 1: railItems.add( new Switch(           0,(width-2*gridSize)/gridSize, 0, 2, gridSize,1,right)); println("SWITCH CREATED");    break;
-                case 2: railItems.add( new Line(               (width-2*gridSize)/gridSize, 2, 2, gridSize) );      println("LINE CREATED");      break;
-                case 3: railItems.add( new Curve(              (width-2*gridSize)/gridSize, 3, 2, gridSize) );      println("CURVE CREATED");     break;
-                case 4: railItems.add( new Detection(        0,(width-2*gridSize)/gridSize, 4, 2, gridSize,1) );      println("DETECTOR CREATED");  break;
-                case 5: railItems.add( new Memory(   0,(width-gridSize-edgeOffset)/gridSize,5, 0, gridSize,1) );      println("MEMORY CREATED");    break;
-                case 6: railItems.add( new Decoupler(0,(width-gridSize-edgeOffset)/gridSize,6, 0, gridSize,1) );      println("DECOUPLER CREATED"); break;
-                case 7: railItems.add( new Signal(0,(width-gridSize-edgeOffset) / gridSize, 7, 0,gridSize,0));      println("SIGNAL CREATED");    break;
+                case 0: railItems.add( new Switch(           0,(width-2*gridSize)/gridSize, 0, 2, gridSize, point_relay, 0, 0, left ) );  println("SWITCH CREATED");    break;
+                case 1: railItems.add( new Switch(           0,(width-2*gridSize)/gridSize, 0, 2, gridSize, point_relay, 0, 0,right ) );  println("SWITCH CREATED");    break;
+                case 2: railItems.add( new Line(               (width-2*gridSize)/gridSize, 2, 2, gridSize, line_)   );                   println("LINE CREATED");      break;
+                case 3: railItems.add( new Curve(              (width-2*gridSize)/gridSize, 3, 2, gridSize, curve_)  );                   println("CURVE CREATED");     break;
+                case 4: railItems.add( new Detection(        0,(width-2*gridSize)/gridSize, 4, 2, gridSize, occupancy_1_I2C, 0, 0) );     println("DETECTOR CREATED");  break;
+                case 5: railItems.add( new Memory(   0,(width-gridSize-edgeOffset)/gridSize,5, 0, gridSize, start_stop_sw, 0, 0) );       println("MEMORY CREATED");    break;
+                case 6: railItems.add( new Decoupler(0,(width-gridSize-edgeOffset)/gridSize,6, 0, gridSize, relay_I2C, 0, 0) );           println("DECOUPLER CREATED"); break;
+                case 7: railItems.add( new Signal(0,   (width-gridSize-edgeOffset)/gridSize, 7, 0,gridSize, 0, 0, 1) );                   println("SIGNAL CREATED");    break;
             }
             index = railItems.size() - 1;
         }
@@ -303,12 +301,13 @@ void keyPressed()
  
     }
     
-    {
+    try {
         RailItem anyClass = railItems.get(index);
         switch(mode)
         {
             
-            default: // all other caracters
+            default: // all other modes
+            break ;
 
             case settingID:
             int localVar = anyClass.getID() ; 
@@ -317,26 +316,50 @@ void keyPressed()
             break;
 
             case settingInputPin:  
-            int localVar1 = anyClass.getPin() ; 
+            int localVar1 = anyClass.getInput() ; 
             localVar1 = makeNumber(localVar1,0,255,13,3); 
-            anyClass.setPin(localVar1) ;  
+            anyClass.setInput(localVar1) ;  
             break;
 
             case settingOutputPin:  
-            int localVar2 = anyClass.getLinkedPin() ; 
+            int localVar2 = anyClass.getOutput() ; 
             localVar2 = makeNumber(localVar2,0,255,13,4); 
-            anyClass.setLinkedPin(localVar2) ;  
+            anyClass.setOutput(localVar2) ;  
             break;
 
             case settingType:
             int localVar3 = anyClass.getType();
-            localVar3 = makeNumber(localVar3,0,13,13,5);
+            int min = 1, max = 1 ;
+            if(anyClass instanceof Switch)      { min = point_pulse         ; max = point_DCC ; }
+           // if(anyClass instanceof Signal)      { min =     ; max =  ; }
+            if(anyClass instanceof Decoupler)   { min = relay_I2C           ; max = relay_DCC  ; }
+            if(anyClass instanceof Memory)      { min = start_stop_sw       ; max = start_stop_sw ; }
+            if(anyClass instanceof Detection)   { min = occupancy_1_I2C     ; max = occupancy_2_Xnet ; }
+            min -= 1 ;
+            max -= 1 ;
+
+            localVar3 = makeNumber(localVar3,min,max,13,5);
             display.printAt(13,5,types[localVar3]);
             anyClass.setType(localVar3) ;
             break; 
         }
     }
-    
+    catch( IndexOutOfBoundsException e) {println("all objects deleted");}
+    //display.cursorOn(true);  cursor has wrong coordinates
+    //display.setCursor(0,mode);
+
+// final int settingID = 1;
+// final int movingItem = 3;
+// final int deletingItem = 4;
+// final int settingInputPin = 5;
+// final int settingOutputPin = 6;
+// final int settingType = 7;
+// display.setCursor(0,2);
+// display.setCursor(0,3);
+// display.setCursor(0,4);
+// display.setCursor(0,5);
+
+
     if( mode == movingItem ) 
     {
         if(locked == true) 
@@ -400,17 +423,48 @@ void saveLayout() {
     for (int i = 0; i < railItems.size(); i++)
     {
         RailItem anyClass = railItems.get(i);
-        if(anyClass instanceof Switch)		output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() + "," + anyClass.getLR() ) ;
-        if(anyClass instanceof Line)		output.println(anyClass.getItem() + ","	+ 0	                + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() ) ;
-        if(anyClass instanceof Curve)		output.println(anyClass.getItem() + ","	+ 0                 + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() ) ;
-        if(anyClass instanceof Signal)      output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() ) ;
-        if(anyClass instanceof Decoupler)	output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() ) ;
-        if(anyClass instanceof Memory)	    output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() ) ;
-        if(anyClass instanceof Detection) 	output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() ) ;
+        if(anyClass instanceof Switch)		output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() + "," + anyClass.getInput() + "," + anyClass.getOutput() + "," + anyClass.getLR() ) ;
+        if(anyClass instanceof Line)		output.println(anyClass.getItem() + ","	+ 0	                + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() + "," + anyClass.getInput() + "," + anyClass.getOutput() ) ;
+        if(anyClass instanceof Curve)		output.println(anyClass.getItem() + ","	+ 0                 + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() + "," + anyClass.getInput() + "," + anyClass.getOutput() ) ;
+        if(anyClass instanceof Signal)      output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() + "," + anyClass.getInput() + "," + anyClass.getOutput() ) ;
+        if(anyClass instanceof Decoupler)	output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() + "," + anyClass.getInput() + "," + anyClass.getOutput() ) ;
+        if(anyClass instanceof Memory)	    output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() + "," + anyClass.getInput() + "," + anyClass.getOutput() ) ;
+        if(anyClass instanceof Detection) 	output.println(anyClass.getItem() + ","	+ anyClass.getID()  + "," + anyClass.getColumn() + "," + anyClass.getRow() + "," + anyClass.getDirection() + "," + anyClass.getType() + "," + anyClass.getInput() + "," + anyClass.getOutput() ) ;
     }
+    output.close();
+
+    output = createWriter("trackSegments.csv");
+    output.println("[TRACK_SEGMENTS]");
+    for (int i = 0; i < railItems.size(); i++)
+    {
+        RailItem anyClass = railItems.get(i);
+        int x    = anyClass.getColumn() ;
+        int y    = anyClass.getRow() ;
+        int dir  = anyClass.getDirection() ;
+        int type = anyClass.getType() ;
+
+        output.println( x + ","	+ y + "," + type + "," + dir ) ;
+    }
+
+
+    output.println("\r\n[IO]");
+    for (int i = 0; i < railItems.size(); i++)
+    {
+        RailItem anyClass = railItems.get(i);
+        int ID          = anyClass.getID() ;
+        int type        = anyClass.getType() ;
+        int inputPin    = anyClass.getInput() ;
+        int outputPin   = anyClass.getOutput() ;
+
+        output.println( ID + "," + type + "," + inputPin + "," + outputPin ) ;
+    }
+
     output.close();
     display.printAt(0,0, "LAYOUT SAVED"); display.clearToEnd();
 }
+
+
+
 
 String line ;
 void loadLayout()
@@ -444,19 +498,21 @@ void loadLayout()
             int row         = Integer.parseInt( pieces[3] );
             int direction   = Integer.parseInt( pieces[4] );
             int type        = Integer.parseInt( pieces[5] );
+            int input       = Integer.parseInt( pieces[6] );
+            int output      = Integer.parseInt( pieces[7] );
 
             
             switch(item){
 
                 case 1: // switch
-                int LR = Integer.parseInt(pieces[6]); // determen left or right switch
-                        railItems.add( new Switch(    ID, column, row, direction, gridSize, type, LR  ) );    break;
-                case 2: railItems.add( new Line(          column, row, direction, gridSize            ) );    break;
-                case 3: railItems.add( new Curve(         column, row, direction, gridSize            ) );    break;
-                case 4: railItems.add( new Detection( ID, column, row, direction, gridSize, type      ) );    break;
-                case 5: railItems.add( new Memory	( ID, column, row, direction, gridSize, type      ) );    break;
-                case 6: railItems.add( new Decoupler( ID, column, row, direction, gridSize, type      ) );    break;
-                case 7: railItems.add( new Signal(    ID, column, row, direction, gridSize, type      ) );    break;
+                int LR = Integer.parseInt(pieces[8]); // determen left or right switch
+                        railItems.add( new Switch(    ID, column, row, direction, gridSize, type, input, output, LR  ) );    break;
+                case 2: railItems.add( new Line(          column, row, direction, gridSize, type                     ) );    break;
+                case 3: railItems.add( new Curve(         column, row, direction, gridSize, type                     ) );    break;
+                case 4: railItems.add( new Detection( ID, column, row, direction, gridSize, type, input, output      ) );    break;
+                case 5: railItems.add( new Memory	( ID, column, row, direction, gridSize, type, input, output      ) );    break;
+                case 6: railItems.add( new Decoupler( ID, column, row, direction, gridSize, type, input, output      ) );    break;
+                case 7: railItems.add( new Signal(    ID, column, row, direction, gridSize, type, input, output      ) );    break;
             }
         }
     } 

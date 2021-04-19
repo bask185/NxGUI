@@ -1,4 +1,4 @@
-class Crossing extends RailItem
+class Crossing extends RailItem // to be made
 {
   // variables
   int column;
@@ -10,9 +10,9 @@ class Crossing extends RailItem
   int direction;
   int directionLimit = 7;
   // constructor
-  Crossing(int Xpos, int Ypos, int direction , int gridSize) 
+  Crossing(int Xpos, int Ypos, int direction , int gridSize, int input, int output) 
   {
-    super(Xpos, Ypos, direction, gridSize);
+    super(Xpos, Ypos, direction, gridSize, 0, output);
   }
   
   // functions

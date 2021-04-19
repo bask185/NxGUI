@@ -23,26 +23,26 @@
 
 class RailItem{
   // variables
-  int column;
-  int row;
-  int Xpos;
-  int Ypos;
+  int column ;
+  int row ;
+  int Xpos ;
+  int Ypos ;
+  int inputPin ;
+  int outputPin ;
 
-  int x0;   // following 8 coordinates are for SD card.
-  int y0;
-  int x1;
-  int y1;
-  int x2;
-  int y2;
-  int x3;     // point have three connections
-  int y3;
+  int x0 ;   // following 8 coordinates are for SD card.
+  int y0 ;
+  int x1 ;
+  int y1 ;
+  int x2 ;
+  int y2 ;
+  int x3 ;     // point have three connections
+  int y3 ;
 
   int ID ;
   int type ;
   int LR ;
 
-  int pin ;           // some devices have both an input as well as an output such as a occupancy detector
-  int linkedPin ;
 
   int direction;
   int gridSize;
@@ -62,12 +62,14 @@ class RailItem{
   }
   
   
-  RailItem(int Xpos, int Ypos, int direction, int gridSize )
+  RailItem(int Xpos, int Ypos, int direction, int gridSize, int inputPin, int outputPin )
   {
     this.Xpos = gridSize + Xpos * gridSize;
     this.Ypos = gridSize + Ypos * gridSize;
     this.direction = direction;
     this.gridSize = gridSize;
+    this.inputPin = inputPin;
+    this.outputPin = outputPin;
    // this.type = type ;
     halveSize = gridSize / 2;
     quarterSize = halveSize / 2;
@@ -86,24 +88,24 @@ class RailItem{
   }
 
 
-  int getPin()
+  int getInput()
   {
-    return pin ;
+    return inputPin ;
   }
 
-  int getLinkedPin()
+  int getOutput()
   {
-    return linkedPin ;
+    return outputPin ;
   }
 
-  void setPin( int _pin )
+  void setInput( int _pin )
   {
-    pin = _pin ;
+    inputPin = _pin ;
   }
 
-  void setLinkedPin( int _pin )
+  void setOutput( int _pin )
   {
-    linkedPin = _pin ;
+    outputPin = _pin ;
   }
  
   int getDirection()

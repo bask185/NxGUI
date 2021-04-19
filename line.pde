@@ -3,16 +3,16 @@ class Line extends RailItem
   // variables
 
   // constructor
-  Line(int Xpos, int Ypos, int direction, int gridSize)
+  Line(int Xpos, int Ypos, int direction, int gridSize, int type )
   {
-    super(Xpos, Ypos, direction, gridSize);
+    super(Xpos, Ypos, direction, gridSize, 0, 0);
+    this.type = type ;
     item = 2;
   }
   
   void Draw()
-  {       
-    if(direction>3)direction-=4;
-    switch(direction) {
+  { 
+    switch( direction ) {
       case 0: //     |
       line(Xpos, Ypos-halveSize, Xpos,Ypos+halveSize);
       break;

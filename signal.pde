@@ -2,8 +2,8 @@ class Signal extends RailItem{
 // variables
 
 // constructor
-Signal(int ID, int Xpos, int Ypos, int direction, int gridSize, int type) {
-    super(Xpos, Ypos, direction, gridSize);
+Signal(int ID, int Xpos, int Ypos, int direction, int gridSize, int type, int input, int output ) {
+    super(Xpos, Ypos, direction, gridSize, input, output);
     this.type = type;
     this.ID = ID;
     //this.state = state;

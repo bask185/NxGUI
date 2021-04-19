@@ -3,9 +3,10 @@ class Curve extends RailItem
   // variables
   
   // constructor
-  Curve(int Xpos, int Ypos, int direction, int gridSize) 
+  Curve(int Xpos, int Ypos, int direction, int gridSize, int type) 
   {
-    super(Xpos, Ypos, direction, gridSize);
+    super(Xpos, Ypos, direction, gridSize, 0, 0);
+    this.type = type ;
     item = 3;
   }
   

@@ -3,11 +3,12 @@
 	// variables
 		
 	// constructor
-	Switch(int ID, int Xpos, int Ypos, int direction, int gridSize, int type, int LR ) {
-		super(Xpos, Ypos, direction, gridSize);
+	Switch(int ID, int Xpos, int Ypos, int direction, int gridSize, int type, int input, int output, int LR ) {
+		super(Xpos, Ypos, direction, gridSize, 0, output); // N.B. points do not have input pins
 		this.LR =  LR;
 		this.ID = ID;
 		this.state = state;
+		this.type = type ;
 		item = 1;
 		designation = str(ID);
 	}

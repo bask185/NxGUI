@@ -1,13 +1,13 @@
-class Memory extends RailItem 
+class Memory extends RailItem // has become a start stop switch
 {
   int switchIndex = 0;
   
   int[] attachedSwitches = new int[256];
   int[] switchStates = new int[256];
   
-  Memory(int ID, int Xpos, int Ypos, int direction, int gridSize, int type)
+  Memory(int ID, int Xpos, int Ypos, int direction, int gridSize, int type, int input, int output )
   {
-    super(Xpos, Ypos, direction, gridSize);
+    super(Xpos, Ypos, direction, gridSize, input, output);
     this.ID = ID;
     this.type = type ;
     item = 5;
