@@ -306,7 +306,7 @@ void keyPressed()
         switch(mode)
         {
             
-            default: // all other modes
+        default: // all other modes
             break ;
 
             case settingID:
@@ -441,7 +441,12 @@ void saveLayout() {
         int x    = anyClass.getColumn() ;
         int y    = anyClass.getRow() ;
         int dir  = anyClass.getDirection() ;
-        int type = anyClass.getType() ;
+        int type = anyClass.getType() ;                     // N.B. left and right turnouts are not separated here, Need to add this 
+        
+        if( type >= point_pulse && type <= point_DCC )      // in the event of a point....
+        {
+            type |= ( anyClass.getLR() - 1 ) << 7 ;         // ... set the 7th bit of 'type' when the point is right
+        }
 
         output.println( x + ","	+ y + "," + type + "," + dir ) ;
     }
